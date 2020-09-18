@@ -645,9 +645,9 @@ namespace Dapper
             bool wasClosed = cnn.State == ConnectionState.Closed;
             try
             {
-                if (wasClosed) await ((DbConnection)cnn).OpenAsync(command.CancellationToken).ConfigureAwait(false);
+                if (wasClosed) await ((DbConnection)cnn).OpenAsync(command.CancellationToken);
                 using (var cmd = (DbCommand)command.SetupCommand(cnn, info.ParamReader))
-                using (var reader = await ExecuteReaderWithFlagsFallbackAsync(cmd, wasClosed, CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, command.CancellationToken).ConfigureAwait(false))
+                using (var reader = await ExecuteReaderWithFlagsFallbackAsync(cmd, wasClosed, CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, command.CancellationToken))
                 {
                     if (!command.Buffered) wasClosed = false; // handing back open reader; rely on command-behavior
                     var results = MultiMapImpl<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TReturn>(null, CommandDefinition.ForCallback(command.Parameters), map, splitOn, reader, identity, true);
@@ -692,9 +692,9 @@ namespace Dapper
             var info = GetCacheInfo(identity, param, command.AddToCache);
             bool wasClosed = cnn.State == ConnectionState.Closed;
             try {
-                if (wasClosed) await ((DbConnection)cnn).OpenAsync().ConfigureAwait(false);
+                if (wasClosed) await ((DbConnection)cnn).OpenAsync();
                 using (var cmd = (DbCommand)command.SetupCommand(cnn, info.ParamReader))
-                using (var reader = await ExecuteReaderWithFlagsFallbackAsync(cmd, wasClosed, CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, command.CancellationToken).ConfigureAwait(false)) {
+                using (var reader = await ExecuteReaderWithFlagsFallbackAsync(cmd, wasClosed, CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, command.CancellationToken)) {
                     var results = MultiMapImpl<TReturn>(null, default(CommandDefinition), types, map, splitOn, reader, identity, true);
                     return command.Buffered ? results.ToList() : results;
                 }
